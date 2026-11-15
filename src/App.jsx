@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ArrowDown, ArrowRight, ArrowUpRight, Menu, X, Sparkles,
   Layers3, Smartphone, MousePointer2, Code2, Palette, Zap,
@@ -50,6 +50,13 @@ function App() {
 
   useEffect(() => {
     const sections = ['home', 'about', 'work', 'services', 'contact'];
+    if (!('IntersectionObserver' in window)) {
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) setActive(id === 'work' ? 'Work' : id.charAt(0).toUpperCase() + id.slice(1));
+      });
+      return;
+    }
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -66,6 +73,11 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const elements = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      elements.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
     const reveal = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -74,7 +86,7 @@ function App() {
         }
       });
     }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(el => reveal.observe(el));
+    elements.forEach(el => reveal.observe(el));
     return () => reveal.disconnect();
   }, []);
 
